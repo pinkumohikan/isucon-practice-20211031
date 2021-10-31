@@ -1,6 +1,6 @@
-.PHONY: gogo build stop-services start-services truncate-logs kataribe
+.PHONY: gogo build stop-services start-services truncate-logs kataribe bench
 
-gogo: stop-services build truncate-logs start-services
+gogo: stop-services build truncate-logs start-services bench
 
 build:
 	cd webapp/go && go build .
@@ -21,3 +21,6 @@ truncate-logs:
 
 kataribe:
 	sudo cat /var/log/nginx/access.log | ./kataribe
+
+bench:
+	./bench  -tls -all-addresses "172.31.27.78" -target 172.31.27.78:443 -jia-service-url http://172.31.17.228:5000
