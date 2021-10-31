@@ -1,9 +1,9 @@
 .PHONY: gogo build stop-services start-services truncate-logs kataribe bench
 
-gogo: stop-services truncate-logs start-services bench
+gogo: stop-services truncate-logs deploy  start-services bench
 
-build:
-	cd webapp/go && go build .
+deploy:
+	scp -Cr webapp/php isucon@172.31.21.30:webapp/php	
 
 stop-services:
 	sudo systemctl stop nginx
