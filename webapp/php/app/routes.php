@@ -1600,7 +1600,7 @@ final class Handler
     public function postIsuCondition(Request $request, Response $response, array $args): Response
     {
         // TODO: 一定割合リクエストを落としてしのぐようにしたが、本来は全量さばけるようにすべき
-        $dropProbability = 0.9;
+        $dropProbability = 0.5;
 
         if ((rand() / getrandmax()) <= $dropProbability) {
             $this->logger->warning('drop post isu condition request');
@@ -1686,35 +1686,6 @@ final class Handler
 
             return $response->withStatus(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
         }
-//        foreach ($req as $cond) {
-//            if (!$this->isValidConditionFormat($cond->condition)) {
-//                $this->dbh->rollBack();
-//                $response->getBody()->write('bad request body');
-//
-//                return $response->withStatus(StatusCodeInterface::STATUS_BAD_REQUEST)
-//                    ->withHeader('Content-Type', 'text/plain; charset=UTF-8');
-//            }
-//
-//            try {
-//                $stmt = $this->dbh->prepare(
-//                    'INSERT INTO `isu_condition`' .
-//                    '	(`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`)' .
-//                    '	VALUES (?, ?, ?, ?, ?)'
-//                );
-//                $stmt->execute([
-//                    $jiaIsuUuid,
-//                    date('Y-m-d H:i:s', $cond->timestamp),
-//                    (int)$cond->isSitting,
-//                    $cond->condition,
-//                    $cond->message,
-//                ]);
-//            } catch (PDOException $e) {
-//                $this->dbh->rollBack();
-//                $this->logger->error('db error: ' . $e->errorInfo[2]);
-//
-//                return $response->withStatus(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
-//            }
-//        }
 
         $this->dbh->commit();
 
