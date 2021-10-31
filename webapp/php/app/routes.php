@@ -1654,6 +1654,12 @@ final class Handler
                 ->withHeader('Content-Type', 'text/plain; charset=UTF-8');
         }
 
+        $insertSQL = 'INSERT INTO `isu_condition`' .
+            '	(`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`)' .
+            '	VALUES ';
+
+
+        $arrayValues = [];
         foreach ($req as $cond) {
             if (!$this->isValidConditionFormat($cond->condition)) {
                 $this->dbh->rollBack();
@@ -1662,27 +1668,23 @@ final class Handler
                 return $response->withStatus(StatusCodeInterface::STATUS_BAD_REQUEST)
                     ->withHeader('Content-Type', 'text/plain; charset=UTF-8');
             }
+            $insertSQL .= '(?, ?, ?, ?, ?)';
+            $arrayValues[] = $jiaIsuUuid;
+            $arrayValues[] = date('Y-m-d H:i:s', $cond->timestamp);
+            $arrayValues[] = (int)$cond->isSitting;
+            $arrayValues[] = $cond->condition;
+            $arrayValues[] = $cond->message;
 
+        }
 
-            try {
-                $stmt = $this->dbh->prepare(
-                    'INSERT INTO `isu_condition`' .
-                    '	(`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`)' .
-                    '	VALUES (?, ?, ?, ?, ?)'
-                );
-                $stmt->execute([
-                    $jiaIsuUuid,
-                    date('Y-m-d H:i:s', $cond->timestamp),
-                    (int)$cond->isSitting,
-                    $cond->condition,
-                    $cond->message,
-                ]);
-            } catch (PDOException $e) {
-                $this->dbh->rollBack();
-                $this->logger->error('db error: ' . $e->errorInfo[2]);
+        try {
+            $stmt = $this->dbh->prepare($insertSQL,$arrayValues);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $this->dbh->rollBack();
+            $this->logger->error('db error: ' . $e->errorInfo[2]);
 
-                return $response->withStatus(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
-            }
+            return $response->withStatus(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
         }
 
         $this->dbh->commit();
