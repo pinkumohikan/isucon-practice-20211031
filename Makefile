@@ -8,18 +8,18 @@ deploy:
 stop-services:
 	sudo systemctl stop nginx
 	sudo systemctl stop isucondition.php
-	sudo systemctl stop mariadb
+	ssh 172.31.31.220 "sudo systemctl stop mariadb"
 
 start-services:
-	sudo systemctl start mariadb
+	ssh 172.31.31.220 sudo systemctl start mariadb
 	sudo systemctl start isucondition.php
 	sudo systemctl start nginx
 
 truncate-logs:
 	sudo truncate --size 0 /var/log/nginx/access.log
 	sudo truncate --size 0 /var/log/nginx/error.log
-	sudo truncate --size 0 /var/log/mysql/error.log
-	sudo truncate --size 0 /var/log/mysql/mysql-slow.log
+	ssh 172.31.31.220 "sudo truncate --size 0 /var/log/mysql/error.log"
+	ssh 172.31.31.220 "sudo truncate --size 0 /var/log/mysql/mysql-slow.log"
 
 kataribe:
 	sudo cat /var/log/nginx/access.log | ./kataribe
