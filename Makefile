@@ -1,18 +1,18 @@
 .PHONY: gogo build stop-services start-services truncate-logs kataribe bench
 
-gogo: stop-services build truncate-logs start-services bench
+gogo: stop-services truncate-logs start-services bench
 
 build:
 	cd webapp/go && go build .
 
 stop-services:
 	sudo systemctl stop nginx
-	sudo systemctl stop isucondition.go
+	sudo systemctl stop isucondition.php
 	sudo systemctl stop mariadb
 
 start-services:
 	sudo systemctl start mariadb
-	sudo systemctl start isucondition.go
+	sudo systemctl start isucondition.php
 	sudo systemctl start nginx
 
 truncate-logs:
