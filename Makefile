@@ -23,4 +23,4 @@ kataribe:
 	sudo cat /var/log/nginx/access.log | ./kataribe
 
 bench:
-	ssh isucon@35.77.19.223 "./bench  -tls -all-addresses "172.31.27.78" -target 172.31.27.78:443 -jia-service-url http://172.31.17.228:5000"
+	ssh isucon@35.77.19.223 "./bench/bench -tls -all-addresses "172.31.27.78" -target 172.31.27.78:443 -jia-service-url http://172.31.17.228:5000"
